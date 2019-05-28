@@ -1,0 +1,3 @@
+== time keeper
+
+Allows to display a timekeeper throught an AdaFruit NeoPixel hardware using an ESP32 board
