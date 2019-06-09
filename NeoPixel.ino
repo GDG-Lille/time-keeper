@@ -1,15 +1,10 @@
 #include <Adafruit_NeoPixel.h>
 #include <esp32-hal.h>
 
-// Which pin on the Arduino is connected to the NeoPixels?
-// On a Trinket or Gemma we suggest changing this to 1:
 #define LED_PIN 13
-
-// How many NeoPixels are attached to the Arduino?
+#define RESTART_BUTTON_PIN 15
 #define LED_COUNT 16
-
-// NeoPixel brightness, 0 (min) to 255 (max)
-#define BRIGHTNESS 50
+#define BRIGHTNESS 20
 
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_KHZ800 + NEO_GRB);
 
@@ -50,22 +45,36 @@ public:
   }
 };
 
+
+TimeKeeper timeKeeper = TimeKeeper(32);
+
+void restart() {
+  timeKeeper = TimeKeeper(32);
+}
+
+
 void setup()
 {
   strip.begin();                   // INITIALIZE NeoPixel strip object (REQUIRED)
   strip.show();                    // Turn OFF all pixels ASAP
   strip.setBrightness(BRIGHTNESS); // Set BRIGHTNESS to about 1/5 (max = 255)
+  pinMode(RESTART_BUTTON_PIN, INPUT_PULLUP);
+  attachInterrupt(RESTART_BUTTON_PIN, restart, FALLING);
 }
 
 void loop()
 {
-  TimeKeeper timeKeeper = TimeKeeper(32);
+  display();
+}
+
+
+void display() {
   while (timeKeeper.getRemainingTime() > 0)
   {
     log_printf("New loop is starting with %d \n", timeKeeper.getRemainingTime());
     displayTimeKeeper(timeKeeper);
   }
-  loop();
+  display();
 }
 
 void displayTimeKeeper(TimeKeeper& timeKeeper)
