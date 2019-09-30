@@ -3,10 +3,10 @@
 
 #define LED_PIN 13
 #define RESTART_BUTTON_PIN 15
-#define SELECTOR_BUTTON 14
+#define SELECTOR_BUTTON 25
 #define LED_COUNT 16
-#define BRIGHTNESS 20
-#define CONFERENCE_DURATION 3000
+#define BRIGHTNESS 60
+#define CONFERENCE_DURATION 2400
 #define QUICKY_DURATION 1200
 
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_KHZ800 + NEO_GRB);
@@ -130,13 +130,13 @@ void loop()
 
 void display() {
   log_printf("time keeper is started %b \n", timeKeeper.isStarted());
-    while (timeKeeper.getRemainingTime() > 0 && timeKeeper.isStarted())
-    {
-      log_printf("New loop is starting with %d \n", timeKeeper.getRemainingTime());
-      displayTimeKeeper();
-    }
-    log_printf("Selector with %d \n", timeSelector.getPreset());
-    displayTimeSelector();
+  while (timeKeeper.getRemainingTime() > 0 && timeKeeper.isStarted())
+  {
+    log_printf("New loop is starting with %d \n", timeKeeper.getRemainingTime());
+    displayTimeKeeper();
+  }
+  log_printf("Selector with %d \n", timeSelector.getPreset());
+  displayTimeSelector();
 }
 
 void displayTimeSelector(){
@@ -167,8 +167,9 @@ void displayRemainingTime()
 {
   strip.clear();
   int coeff = (timeKeeper.getTotalTime() * 10 / timeKeeper.getRemainingTime());
-  for (int i = 0; i < int((strip.numPixels()) * 10 / coeff); i++)
+  for (int i = 0; i <= int((strip.numPixels()) * 10 / coeff); i++)
   {
-    strip.setPixelColor(i, strip.Color(0, BRIGHTNESS, 0));
+    strip.setPixelColor(i, strip.Color(coeff > 85 ? BRIGHTNESS : 0, coeff <= 85 ? BRIGHTNESS : 0, 0));
   }
 }
+
